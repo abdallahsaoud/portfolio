@@ -29,8 +29,27 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:locale" content="fr_FR" />
     <meta property="og:url" content={canonical} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" id="favicon" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="generator" content={Astro.generator} />
+    <script is:inline>
+      // Le judoka est heureux quand on est sur le site, triste quand on part sur un autre onglet.
+      (() => {
+        const icon = document.getElementById('favicon');
+        if (!icon) return;
+        const happy = '/favicon.svg';
+        const sad = '/favicon-sad.svg';
+        // Précharge la version triste pour que le changement soit instantané.
+        new Image().src = sad;
+        document.addEventListener('visibilitychange', () => {
+          icon.setAttribute('href', document.hidden ? sad : happy);
+        });
+      })();
+    </script>
   </head>
   <body>
     <Nav />

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- Avatar judoka provisoire, version heureuse (onglet actif). À remplacer par le bitmoji. -->
+  <!-- Avatar judoka provisoire, version triste (onglet quitté). À remplacer par le bitmoji. -->
   <rect width="64" height="64" rx="14" fill="#0b0e12"/>
   <!-- kimono -->
   <path d="M6 64 C8 50 18 43 23 42 L32 55 L41 42 C46 43 56 50 58 64 Z" fill="#f4f4f0"/>
@@ -16,11 +16,16 @@
   <path d="M19.5 29 C21 40 43 40 44.5 29 C42 36 22 36 19.5 29 Z" fill="#241a14"/>
   <!-- cheveux -->
   <path d="M18.5 26 C19 11 45 11 45.5 26 C43 19 38 17 32 17.5 C26 17 21 19 18.5 26 Z" fill="#241a14"/>
+  <!-- sourcils tristes -->
+  <path d="M23.5 23.5 L28.5 25" stroke="#241a14" stroke-width="1.6" stroke-linecap="round"/>
+  <path d="M40.5 23.5 L35.5 25" stroke="#241a14" stroke-width="1.6" stroke-linecap="round"/>
   <!-- yeux -->
-  <circle cx="26.5" cy="27" r="1.7" fill="#1b1410"/>
-  <circle cx="37.5" cy="27" r="1.7" fill="#1b1410"/>
-  <!-- sourire -->
-  <path d="M26.5 32.5 Q32 37.5 37.5 32.5" fill="none" stroke="#ffd9c6" stroke-width="2" stroke-linecap="round"/>
-  <!-- point vert du site -->
-  <circle cx="53" cy="11" r="4" fill="#5ef38c"/>
+  <circle cx="26.5" cy="27.5" r="1.7" fill="#1b1410"/>
+  <circle cx="37.5" cy="27.5" r="1.7" fill="#1b1410"/>
+  <!-- bouche triste -->
+  <path d="M27 35.5 Q32 31.5 37 35.5" fill="none" stroke="#ffd9c6" stroke-width="2" stroke-linecap="round"/>
+  <!-- larme -->
+  <path d="M40.5 29.5 C42.5 32.5 42.5 34.5 40.5 34.5 C38.5 34.5 38.5 32.5 40.5 29.5 Z" fill="#6fb3ff"/>
+  <!-- point du site, éteint -->
+  <circle cx="53" cy="11" r="4" fill="#3a4451"/>
 </svg>
