@@ -1,0 +1,41 @@
+<svg viewBox="0 0 600 280" role="img" aria-label="Flux du microservice analytics : événements, ingestion, tranches de cinq minutes recalculées par cron, base de métriques, API en lecture seule.">
+  <defs>
+    <marker id="arr-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+    </marker>
+  </defs>
+  <g font-family="var(--mono)" font-size="12.5" fill="currentColor">
+    <path d="M208 82 C 280 6, 440 6, 525 82" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-dasharray="4 4"></path>
+    <text x="365" y="26" text-anchor="middle" fill-opacity=".6" text-decoration="line-through">recalcul à chaque requête</text>
+    <text x="365" y="44" text-anchor="middle" fill="var(--accent)" font-size="10.5">WAU / MAU ne s'additionnent pas entre tranches</text>
+
+    <rect x="14" y="88" width="108" height="48" fill="none" stroke="currentColor" rx="4"></rect>
+    <text x="68" y="117" text-anchor="middle">Événements</text>
+    <line x1="122" y1="112" x2="155" y2="112" stroke="currentColor" marker-end="url(#arr-a)"></line>
+    <text x="139" y="104" text-anchor="middle" font-size="9.5" fill-opacity=".7">NATS</text>
+
+    <rect x="156" y="88" width="92" height="48" fill="none" stroke="currentColor" rx="4"></rect>
+    <text x="202" y="117" text-anchor="middle">Ingestion</text>
+    <line x1="248" y1="112" x2="285" y2="112" stroke="currentColor" marker-end="url(#arr-a)"></line>
+
+    <rect x="286" y="82" width="172" height="60" fill="none" stroke="var(--accent)" stroke-width="2" rx="6"></rect>
+    <text x="372" y="107" text-anchor="middle" font-weight="600">Tranches de 5 min</text>
+    <text x="372" y="126" text-anchor="middle" font-size="10" fill-opacity=".7">cron · rattrapage des trous</text>
+    <line x1="458" y1="112" x2="491" y2="112" stroke="currentColor" marker-end="url(#arr-a)"></line>
+
+    <rect x="492" y="88" width="96" height="48" fill="none" stroke="currentColor" rx="4"></rect>
+    <text x="540" y="112" text-anchor="middle">API</text>
+    <text x="540" y="126" text-anchor="middle" font-size="10" fill-opacity=".7">back-office</text>
+
+    <line x1="372" y1="142" x2="372" y2="180" stroke="currentColor" marker-end="url(#arr-a)"></line>
+    <ellipse cx="372" cy="191" rx="52" ry="9" fill="none" stroke="currentColor"></ellipse>
+    <path d="M320 191 V231 A52 9 0 0 0 424 231 V191" fill="none" stroke="currentColor"></path>
+    <text x="372" y="218" text-anchor="middle" font-size="11">métriques</text>
+    <text x="372" y="264" text-anchor="middle" font-size="10.5" fill-opacity=".7">PostgreSQL · flux incrémentés · états recalculés</text>
+    <path d="M424 212 C 490 212, 530 180, 540 140" fill="none" stroke="currentColor" stroke-dasharray="3 3" marker-end="url(#arr-a)"></path>
+    <text x="512" y="200" font-size="9.5" fill-opacity=".7">lecture seule</text>
+
+    <text x="14" y="200" font-size="10.5" fill="var(--accent)">1 jour = 288 tranches</text>
+    <text x="14" y="216" font-size="10.5" fill="var(--accent)">reprise exacte après panne</text>
+  </g>
+</svg>

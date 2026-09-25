@@ -1,0 +1,346 @@
+---
+import Base from '../../layouts/Base.astro';
+import Highlight from '../../components/Highlight.astro';
+import DiagMigration from '../../components/diagrams/DiagMigration.astro';
+import DiagAnalytics from '../../components/diagrams/DiagAnalytics.astro';
+import DiagDedup from '../../components/diagrams/DiagDedup.astro';
+
+const stack = [
+  'Node 24',
+  'TypeScript',
+  'NestJS',
+  'PostgreSQL',
+  'TypeORM',
+  'NATS',
+  'BullMQ',
+  'Redis',
+  'Kubernetes',
+  'Nuxt',
+  'k6',
+  'GitHub Actions',
+];
+
+const figures = [
+  { v: '15', l: 'microservices, une base PostgreSQL chacun' },
+  { v: '≈ 420', l: 'pull requests relues et mergées' },
+  { v: '≈ 30 %', l: 'du code du backend actuel (git blame)' },
+  { v: 'mars 2026', l: 'nouvelle version en production' },
+];
+---
+
+<Base
+  title="Scorecast · étude de cas · Abdallah Saoud"
+  description="Backend en microservices, back-office et infrastructure Kubernetes d’une application de pronostics sportifs en production. Six décisions techniques racontées."
+>
+  <article class="wrap">
+    <header class="head">
+      <p class="kicker">Étude de cas · iDalgo · alternance · nov. 2024 → aujourd’hui</p>
+      <h1 class="mono">Scorecast</h1>
+      <p class="lead">
+        Une application de pronostics sportifs entre amis : compétitions privées ou publiques, matchs à pronostiquer,
+        points, ligues hebdomadaires, chat. La nouvelle version est en production depuis mars 2026, avec plusieurs
+        milliers d’utilisateurs actifs par jour et plusieurs centaines de milliers lors des grands événements.
+      </p>
+
+      <dl class="meta">
+        <div>
+          <dt class="mono">Rôle</dt>
+          <dd>Développeur full-stack, en alternance</dd>
+        </div>
+        <div>
+          <dt class="mono">Périmètre</dt>
+          <dd>API en microservices, infrastructure, back-office, produit B2B</dd>
+        </div>
+        <div>
+          <dt class="mono">Équipe</dt>
+          <dd>Un lead technique, des développeurs back et front, un ingénieur infra</dd>
+        </div>
+        <div>
+          <dt class="mono">Stack</dt>
+          <dd>
+            <ul class="tags">
+              {stack.map((s) => <li>{s}</li>)}
+            </ul>
+          </dd>
+        </div>
+      </dl>
+
+      <ul class="figures">
+        {
+          figures.map((f) => (
+            <li>
+              <span class="v mono">{f.v}</span>
+              <span class="l">{f.l}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </header>
+
+    <section class="arch">
+      <div class="sec-head">
+        <h2>Comment c’est construit</h2>
+      </div>
+      <p>
+        Une passerelle HTTP unique reçoit les appels des applications et les traduit en messages sur un bus NATS.
+        Derrière, quinze microservices NestJS, chacun avec sa propre base PostgreSQL, se parlent en requête-réponse et
+        par événements. Les traitements longs et les tâches planifiées passent par des files BullMQ sur Redis. Le tout
+        tourne sur Kubernetes, déployé en GitOps.
+      </p>
+    </section>
+
+    <section class="points">
+      <div class="sec-head">
+        <h2>Six décisions que je peux défendre</h2>
+        <span>problème · choix · résultat</span>
+      </div>
+
+      <Highlight
+        n="01"
+        title="Migrer un monolithe sans fenêtre de coupure"
+        tag="données · architecture"
+        problem="L’ancienne API, un monolithe sur MySQL, servait encore tous les utilisateurs. Il fallait déplacer comptes, compétitions et historiques vers quatorze bases PostgreSQL, sans couper le service ni perdre une partie."
+        choice="Le monolithe expose des points d’export protégés par jeton ; la nouvelle plateforme les interroge et déclenche une tâche de migration par compétition. Chaque tâche vérifie d’abord si le travail est déjà fait, donc on peut la relancer sans risque. Des scripts de reprise avec fichier de progression et mode simulation complètent le dispositif."
+        result="Plusieurs dizaines de milliers d’utilisateurs migrés pendant que les deux versions tournaient en parallèle. Le module a été retiré une fois la migration terminée."
+        caption="Migration V2 → V3, vue simplifiée"
+      >
+        <DiagMigration />
+      </Highlight>
+
+      <Highlight
+        n="02"
+        title="Tester la charge avant de lancer"
+        tag="fiabilité · performance"
+        problem="La nouvelle version devait sortir en mars 2026 devant une audience qui grimpe à plusieurs centaines de milliers d’utilisateurs les soirs de grands matchs. Personne ne voulait découvrir les limites en production."
+        choice="Une suite de tests de charge k6 : jetons d’authentification forgés en lot, scénario qui rejoue le démarrage de l’application mobile, profils de charge progressifs et seuils de temps de réponse."
+        result="Plusieurs défauts de performance détectés et corrigés avant la mise en production."
+      />
+
+      <Highlight
+        n="03"
+        title="Un service d’analytics dont les métriques ne s’additionnent pas"
+        tag="conception · données"
+        problem="L’équipe produit voulait des métriques d’audience : actifs par jour, par semaine, par mois, rétention. Or ces métriques ne se somment pas entre tranches de temps, un même joueur apparaissant dans plusieurs."
+        choice="Un microservice dédié, créé de zéro. Le temps est découpé en tranches de cinq minutes ; les compteurs de flux sont incrémentés à l’ingestion, les métriques d’état recalculées par une tâche planifiée qui rattrape toutes les tranches manquantes dans l’ordre. L’infrastructure Kubernetes du service a été livrée en une seule PR."
+        result="Une reprise exacte après panne, une granularité de lecture imposée par la longueur de la période demandée, et des tableaux de bord consultés au quotidien par l’équipe produit."
+        caption="Microservice analytics, flux simplifié"
+      >
+        <DiagAnalytics />
+      </Highlight>
+
+      <Highlight
+        n="04"
+        title="Des recalculs de classement perdus en silence"
+        tag="fiabilité · production"
+        problem="Lors d’un pic, plusieurs milliers de compétitions liées à un même match, des corrections de score n’atteignaient plus les classements. Aucune erreur : les tâches de recalcul étaient simplement ignorées, parce que leur identifiant statique entrait en collision avec des tâches terminées encore conservées."
+        choice="Passer au mécanisme de dédoublonnage natif de la file de tâches, en gardant la dernière tâche lorsqu’une est déjà active, et supprimer les gardes manuelles devenues inutiles."
+        result="Correctif livré en hotfix en production, puis généralisé à sept planificateurs."
+        caption="Collision d’identifiants, avant et après"
+      >
+        <DiagDedup />
+      </Highlight>
+
+      <Highlight
+        n="05"
+        title="Refondre les ligues sans casser les apps publiées"
+        tag="SQL · compatibilité"
+        problem="Nouveau modèle de ligues hebdomadaires à six niveaux, avec des montées et des descentes interdépendantes. Les applications mobiles déjà publiées continuaient d’appeler l’ancien système."
+        choice="L’évaluation hebdomadaire tient en une seule requête SQL fenêtrée, pilotée par une table de réglages. L’ancien et le nouveau système tournent côte à côte derrière une nouvelle version de l’API ; le nouveau reste dormant tant que le joueur ne s’y est pas inscrit."
+        result="Une bascule sans blocage des mises en production, couverte par des tests de non-régression sur le calendrier des semaines."
+      />
+
+      <Highlight
+        n="06"
+        title="L’infrastructure de production en GitOps"
+        tag="infra · Kubernetes"
+        problem="Migration de la production vers un nouveau cluster Kubernetes managé : quatorze microservices à décrire, chacun avec sa base de données, ses sauvegardes et son autoscaling."
+        choice="Écriture de l’essentiel des manifests : déploiement, autoscaling, une base PostgreSQL par service via un opérateur dédié, sauvegardes planifiées, secrets chiffrés. Sans détenir les clés de déchiffrement : la PR ne pose que les références au secret, et le cluster attend sans casser."
+        result="Une première version factorisée a été refusée en revue pour illisibilité ; la version retenue garde un fichier simple par service. Leçon : en infrastructure, la duplication lisible vaut mieux qu’une abstraction difficile à relire."
+      />
+    </section>
+
+    <section class="also">
+      <div class="sec-head">
+        <h2>Aussi, en une ligne</h2>
+      </div>
+      <ul>
+        <li>
+          <strong>Produit B2B.</strong> Suppression programmée des espaces clients avec procès-verbal de destruction
+          RGPD, traversant quatre services et rejouable après échec.
+        </li>
+        <li>
+          <strong>Back-office.</strong> Environ 95 PR sur le back-office Nuxt, avec migration progressive vers une
+          couche API typée.
+        </li>
+      </ul>
+    </section>
+
+    <section class="learn">
+      <div class="col">
+        <div class="sec-head">
+          <h2>Ce que j’en retiens</h2>
+        </div>
+        <ul>
+          <li>En production, tout ce qui peut être rejoué doit pouvoir l’être sans dégât. L’idempotence n’est pas une option.</li>
+          <li>Les files de tâches ont leurs propres pièges : lire ce que l’outil sait faire avant d’inventer des gardes manuelles.</li>
+          <li>Tester la charge avant le lancement coûte moins cher qu’un soir de match raté.</li>
+          <li>En infrastructure comme en code, la lisibilité pour le relecteur passe avant l’élégance.</li>
+        </ul>
+      </div>
+      <div class="col">
+        <div class="sec-head">
+          <h2>Ce que je ferais autrement</h2>
+        </div>
+        <ul>
+          <li>Écrire les tests de non-régression en même temps que les correctifs, pas après.</li>
+          <li>Garder systématiquement des mesures avant et après : certains gains sont réels, mais je ne peux pas tous les chiffrer aujourd’hui.</li>
+        </ul>
+      </div>
+    </section>
+
+    <nav class="pager mono" aria-label="Navigation entre projets">
+      <a class="arrow" href="/#projets">← Retour aux projets</a>
+      <a class="arrow" href="/#heritage">Projet suivant : Héritage →</a>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .head {
+    padding: 88px 0 24px;
+  }
+  h1 {
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    margin: 0 0 22px;
+  }
+  .lead {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: 760px;
+    margin: 0 0 40px;
+  }
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 28px;
+    margin: 0 0 36px;
+    padding: 24px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .meta dt {
+    font-size: 11.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .meta dd {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .figures {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+  .figures li {
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .figures .v {
+    display: block;
+    font-size: 26px;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .figures .l {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .arch {
+    padding-top: 64px;
+  }
+  .arch p {
+    padding-top: 22px;
+    color: var(--muted);
+    max-width: 760px;
+    margin: 0;
+  }
+  .points {
+    padding-top: 64px;
+  }
+  .also {
+    padding-top: 64px;
+  }
+  .also ul,
+  .learn ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    padding-top: 20px;
+    display: grid;
+    gap: 12px;
+    color: var(--muted);
+    font-size: 15.5px;
+    line-height: 1.6;
+  }
+  .learn li,
+  .also li {
+    position: relative;
+    padding-left: 22px;
+  }
+  .learn li::before,
+  .also li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    top: -1px;
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 18px;
+  }
+  .learn {
+    padding-top: 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+  .pager {
+    margin-top: 72px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 820px) {
+    .head {
+      padding-top: 56px;
+    }
+    .meta,
+    .figures,
+    .learn {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .meta,
+    .figures,
+    .learn {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

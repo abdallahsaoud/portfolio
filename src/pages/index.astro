@@ -1,0 +1,179 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectSection from '../components/ProjectSection.astro';
+import Timeline from '../components/Timeline.astro';
+import { projects } from '../data/projects';
+---
+
+<Base
+  title="Abdallah Saoud · développeur full-stack, plus à l’aise côté serveur"
+  description="Développeur full-stack en alternance chez iDalgo sur Scorecast, dernière année du Mastère CTO & Tech Lead à HETIC. Portfolio : Scorecast, Héritage, Aled, SUPER_PONG."
+>
+  <section class="hero wrap">
+    <p class="prompt mono"><span class="tilde">~</span> <span class="dollar">$</span> whoami</p>
+    <h1 class="mono">
+      Abdallah Saoud.<br />
+      Développeur full-stack, <em>plus à l’aise côté serveur.</em>
+    </h1>
+    <p class="lead">
+      Développeur full-stack chez iDalgo sur Scorecast, en alternance, et en dernière année du Mastère CTO &amp;
+      Tech Lead à HETIC. Professeur de judo en parallèle. Avant le code, j’ai fait du commerce : j’en ai gardé
+      le goût des équipes qui s’entendent bien.
+    </p>
+    <div class="cta">
+      <a class="btn" href="#projets">./projets</a>
+      <a class="arrow" href="#contact">contact →</a>
+    </div>
+  </section>
+
+  <section class="sec wrap" id="projets">
+    <div class="sec-head">
+      <h2>Projets</h2>
+      <span>2023 → 2026</span>
+    </div>
+    {projects.map((p) => <ProjectSection project={p} />)}
+  </section>
+
+  <section class="sec wrap" id="parcours">
+    <div class="sec-head">
+      <h2>Parcours</h2>
+      <span>judo → commerce → code</span>
+    </div>
+    <div class="tl-wrap">
+      <Timeline />
+    </div>
+  </section>
+
+  <section class="sec wrap" id="methode">
+    <div class="sec-head">
+      <h2>Comment je travaille</h2>
+    </div>
+    <ul class="method">
+      <li>
+        <strong>Des PR structurées</strong> : contexte, problème, solution, plan de test. Relues avant d’être
+        mergées, et je relis celles des autres.
+      </li>
+      <li>
+        <strong>Des assistants IA au quotidien</strong>, en gardant la conception, la relecture et la responsabilité
+        de ce qui part en production. Je reste à l’affût des usages structurés de l’IA dans le métier de
+        développeur.
+      </li>
+      <li>
+        <strong>Le goût des systèmes qui tiennent la charge</strong> et des équipes où l’on se parle. Les deux vont
+        ensemble.
+      </li>
+    </ul>
+  </section>
+
+  <section class="sec wrap" id="contact">
+    <div class="sec-head">
+      <h2>Contact</h2>
+      <span>disponible pour un CDI</span>
+    </div>
+    <div class="contact">
+      <a class="mail mono" href="mailto:abdousa392@gmail.com">abdousa392@gmail.com</a>
+      <p class="contact-text">
+        Je suis disponible pour un CDI, dans une équipe produit avec du vrai back-end. Pour un échange, un
+        e-mail suffit.
+      </p>
+      <div class="contact-links">
+        <a class="arrow" href="https://github.com/abdallahsaoud" target="_blank" rel="noopener">GitHub →</a>
+        <a class="arrow" href="https://www.linkedin.com/in/abdallah-saoud-987aa6269/" target="_blank" rel="noopener">LinkedIn →</a>
+        <a class="arrow" href="/cv.pdf" target="_blank" rel="noopener">CV en PDF →</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding: 104px var(--pad) 40px;
+  }
+  .prompt {
+    font-size: 14px;
+    color: var(--muted);
+    margin: 0 0 20px;
+  }
+  .tilde {
+    color: var(--muted-2);
+  }
+  .dollar {
+    color: var(--accent);
+  }
+  h1 {
+    font-size: clamp(28px, 4.2vw, 42px);
+    line-height: 1.22;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    margin: 0 0 26px;
+    max-width: 880px;
+  }
+  h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .lead {
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--muted);
+    max-width: 680px;
+    margin: 0 0 34px;
+  }
+  .cta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .tl-wrap {
+    padding-top: 8px;
+  }
+  .method {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    padding-top: 28px;
+    color: var(--muted);
+    font-size: 15.5px;
+    line-height: 1.6;
+  }
+  .contact {
+    padding-top: 32px;
+  }
+  .mail {
+    display: inline-block;
+    font-size: clamp(18px, 3vw, 26px);
+    color: var(--fg);
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 4px;
+    margin-bottom: 18px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+    word-break: break-all;
+  }
+  .mail:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .contact-text {
+    color: var(--muted);
+    max-width: 620px;
+    margin: 0 0 24px;
+  }
+  .contact-links {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  @media (max-width: 820px) {
+    .hero {
+      padding-top: 72px;
+    }
+    .method {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+  }
+</style>

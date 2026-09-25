@@ -1,0 +1,63 @@
+---
+const isHome = Astro.url.pathname === '/';
+const base = isHome ? '' : '/';
+---
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a href="/" class="logo" aria-label="Accueil"><span class="dot">●</span> abdallah</a>
+    <nav aria-label="Navigation principale">
+      <a href={`${base}#projets`}>projets</a>
+      <a href={`${base}#parcours`}>parcours</a>
+      <a href={`${base}#contact`}>contact</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(11, 14, 18, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-in {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+    font-family: var(--mono);
+    font-size: 13.5px;
+  }
+  .logo {
+    font-weight: 500;
+    color: var(--fg);
+  }
+  .dot {
+    color: var(--accent);
+    font-size: 11px;
+    vertical-align: 1px;
+  }
+  nav {
+    display: flex;
+    gap: 24px;
+  }
+  nav a {
+    color: var(--muted);
+    transition: color 0.15s ease;
+  }
+  nav a:hover {
+    color: var(--fg);
+  }
+  @media (max-width: 480px) {
+    nav {
+      gap: 16px;
+    }
+    .nav-in {
+      font-size: 12.5px;
+    }
+  }
+</style>

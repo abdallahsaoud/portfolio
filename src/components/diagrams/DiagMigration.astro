@@ -1,0 +1,54 @@
+<svg viewBox="0 0 600 270" role="img" aria-label="Migration du monolithe vers les microservices : export protégé côté monolithe, service de migration, une tâche idempotente par compétition, bases PostgreSQL par service, les deux versions en parallèle.">
+  <defs>
+    <marker id="arr-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"></path>
+    </marker>
+  </defs>
+  <g font-family="var(--mono)" font-size="12.5" fill="currentColor">
+    <!-- Monolithe -->
+    <rect x="14" y="60" width="140" height="120" fill="none" stroke="currentColor" rx="4"></rect>
+    <text x="84" y="84" text-anchor="middle" font-weight="600">Monolithe V2</text>
+    <text x="84" y="101" text-anchor="middle" font-size="10" fill-opacity=".7">MySQL · toujours en prod</text>
+    <rect x="28" y="118" width="112" height="44" fill="none" stroke="currentColor" stroke-opacity=".6" rx="3"></rect>
+    <text x="84" y="137" text-anchor="middle" font-size="10.5">export protégé</text>
+    <text x="84" y="151" text-anchor="middle" font-size="9.5" fill-opacity=".7">JWT</text>
+
+    <!-- Lien HTTP -->
+    <line x1="154" y1="140" x2="214" y2="140" stroke="currentColor" marker-end="url(#arr-m)"></line>
+    <text x="184" y="131" text-anchor="middle" font-size="9.5" fill-opacity=".7">HTTP</text>
+
+    <!-- Service de migration -->
+    <rect x="216" y="110" width="150" height="60" fill="none" stroke="var(--accent)" stroke-width="2" rx="6"></rect>
+    <text x="291" y="135" text-anchor="middle" font-weight="600">Migration</text>
+    <text x="291" y="153" text-anchor="middle" font-size="10" fill-opacity=".7">une tâche par compétition</text>
+
+    <!-- Fan-out vers les jobs -->
+    <path d="M366 128 C 390 128, 392 62, 416 62" fill="none" stroke="currentColor" marker-end="url(#arr-m)"></path>
+    <path d="M366 140 L 416 140" fill="none" stroke="currentColor" marker-end="url(#arr-m)"></path>
+    <path d="M366 152 C 390 152, 392 218, 416 218" fill="none" stroke="currentColor" marker-end="url(#arr-m)"></path>
+
+    <g font-size="10.5">
+      <rect x="418" y="42" width="168" height="40" fill="none" stroke="currentColor" rx="3"></rect>
+      <text x="428" y="59">job · compétition A</text>
+      <text x="428" y="74" font-size="9.5" fill="var(--accent)">déjà migrée ? → ignorer</text>
+
+      <rect x="418" y="120" width="168" height="40" fill="none" stroke="currentColor" rx="3"></rect>
+      <text x="428" y="137">job · compétition B</text>
+      <text x="428" y="152" font-size="9.5" fill="var(--accent)">déjà migrée ? → écrire</text>
+
+      <rect x="418" y="198" width="168" height="40" fill="none" stroke="currentColor" rx="3"></rect>
+      <text x="428" y="215">job · compétition C</text>
+      <text x="428" y="230" font-size="9.5" fill-opacity=".7">relançable sans dégât</text>
+    </g>
+
+    <!-- Bases -->
+    <line x1="502" y1="82" x2="502" y2="118" stroke="currentColor" stroke-opacity=".5"></line>
+    <line x1="502" y1="160" x2="502" y2="196" stroke="currentColor" stroke-opacity=".5"></line>
+    <text x="586" y="258" text-anchor="end" font-size="10.5" fill-opacity=".7">→ PostgreSQL, une base par service</text>
+
+    <!-- Notes -->
+    <text x="14" y="216" font-size="10.5" fill="var(--accent)">sans fenêtre de coupure :</text>
+    <text x="14" y="231" font-size="10.5" fill="var(--accent)">V2 et V3 tournent en parallèle</text>
+    <text x="14" y="253" font-size="10" fill-opacity=".7">reprise · fichier de progression · --dry-run</text>
+  </g>
+</svg>

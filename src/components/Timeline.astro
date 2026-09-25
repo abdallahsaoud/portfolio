@@ -1,0 +1,69 @@
+---
+import { parcours } from '../data/parcours';
+---
+
+<ol class="tl">
+  {
+    parcours.map((s) => (
+      <li>
+        <span class="when mono">{s.when}</span>
+        <div class="body">
+          <h3>{s.title}</h3>
+          <p>{s.text}</p>
+        </div>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .tl {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .tl li {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 32px;
+    position: relative;
+    padding: 22px 0 22px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .tl li:last-child {
+    border-bottom: 0;
+  }
+  .when {
+    font-size: 12.5px;
+    color: var(--muted);
+    padding-top: 4px;
+    position: relative;
+    padding-left: 18px;
+  }
+  .when::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  .body h3 {
+    margin: 0 0 4px;
+    font-size: 16.5px;
+    font-weight: 600;
+  }
+  .body p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 15.5px;
+  }
+  @media (max-width: 640px) {
+    .tl li {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+  }
+</style>
