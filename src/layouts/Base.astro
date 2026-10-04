@@ -17,6 +17,8 @@ interface Props {
 
 const { title, description, page = 'accueil', noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
+// Image de partage en JPEG léger : certaines messageries ignorent les images trop lourdes.
+const ogImage = new URL('/og.jpg', Astro.site);
 ---
 
 <!doctype html>
@@ -35,10 +37,14 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:locale" content="fr_FR" />
     <meta property="og:url" content={canonical} />
     <link rel="canonical" href={canonical} />
-    <meta property="og:image" content={new URL('/og.png', Astro.site)} />
+    <meta property="og:site_name" content="Abdallah Saoud" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Abdallah Saoud, développeur full-stack, plus à l’aise côté serveur" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="icon" type="image/png" sizes="256x256" href="/favicon.png" id="favicon" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="generator" content={Astro.generator} />
