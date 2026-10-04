@@ -1,0 +1,73 @@
+---
+// Rend une scène au feutre : traits qui se tracent, pointillés, messages qui circulent, libellés.
+import type { Scene, Stroke } from './sk';
+
+interface Props extends Scene {
+  // Tremblé plus léger pour les petits croquis.
+  small?: boolean;
+}
+
+const { ink, blue, red, grn, dash, texts, packets, pkAt = 2.6, pkR = 5, small = false } = Astro.props;
+const filter = small ? 'url(#wob-s)' : 'url(#wob)';
+const st = (s: Stroke) => `--d:${s.at ?? 0}s;--t:${s.t ?? 0.5}s`;
+const groups = [
+  { cls: 'ink', list: ink },
+  { cls: 'blue', list: blue },
+  { cls: 'red', list: red },
+  { cls: 'grn', list: grn },
+];
+---
+
+{
+  groups.map(
+    (g) =>
+      g.list &&
+      g.list.length > 0 && (
+        <g class={g.cls} filter={filter}>
+          {g.list.map((s) => (
+            <path class="draw" pathLength="1" d={s.d} style={st(s)} stroke={s.color} stroke-width={s.w} fill={s.fill} />
+          ))}
+        </g>
+      ),
+  )
+}
+{
+  dash && dash.length > 0 && (
+    <g class="dsh" filter="url(#wob-u)">
+      {dash.map((s) => (
+        <path class="lbl" d={s.d} style={`--d:${s.at ?? 0}s`} stroke={s.color} stroke-width={s.w} />
+      ))}
+    </g>
+  )
+}
+{
+  packets && packets.length > 0 && (
+    <g class="pk" style={`--d:${pkAt}s`}>
+      {packets.map((p) => (
+        <circle r={pkR} fill={p.fill ?? 'var(--blue)'}>
+          <animateMotion dur={`${p.dur ?? 2.4}s`} begin={`${p.begin ?? 0}s`} repeatCount="indefinite" path={p.path} />
+        </circle>
+      ))}
+    </g>
+  )
+}
+{
+  texts && texts.length > 0 && (
+    <g class="txt">
+      {texts.map((t) => (
+        <text
+          class:list={['lbl', t.kind ?? 'hand']}
+          x={t.x}
+          y={t.y}
+          text-anchor={t.anchor ?? 'middle'}
+          font-size={t.size ?? 19}
+          fill={t.fill}
+          style={`--d:${t.at ?? 0}s`}
+          transform={t.rot ? `rotate(${t.rot} ${t.x} ${t.y})` : undefined}
+        >
+          {t.s}
+        </text>
+      ))}
+    </g>
+  )
+}

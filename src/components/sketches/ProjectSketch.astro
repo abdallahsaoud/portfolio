@@ -1,0 +1,178 @@
+---
+// Le croquis d'un projet, choisi par son slug.
+import Sk from './Sk.astro';
+import Draw from './Draw.astro';
+import { box, arrow, ring, type Scene } from './sk';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const blue = 'var(--blue)';
+
+const scenes: Record<string, { viewBox: string; label: string; scene: Scene }> = {
+  scorecast: {
+    viewBox: '0 0 260 170',
+    label: 'Croquis au feutre : l’appli appelle une API, qui répartit les messages vers trois services, comptes, matchs et classements.',
+    scene: {
+      ink: [
+        { d: 'M14 50H36Q42 50 42 56V110Q42 116 36 116H14Q8 116 8 110V56Q8 50 14 50Z', at: 0.1, t: 0.6 },
+        { d: 'M15 62H35M15 70H28M15 84H35V100H15Z', at: 0.5, t: 0.3, w: 1.6 },
+        { d: 'M48 83H80M73 78L80 83L73 88', at: 0.7, t: 0.3 },
+        { d: box(86, 62, 52, 42, 5), at: 0.9 },
+        { d: 'M142 72C156 64 164 52 176 44M168 43L176 44L173 51', at: 1.3, t: 0.3 },
+        { d: 'M142 83H176M169 78L176 83L169 88', at: 1.4, t: 0.3 },
+        { d: 'M142 94C156 102 164 114 176 122M173 115L176 122L168 123', at: 1.5, t: 0.3 },
+        { d: box(180, 28, 70, 28, 4), at: 1.6, t: 0.4 },
+        { d: box(180, 69, 70, 28, 4), at: 1.7, t: 0.4 },
+        { d: box(180, 110, 70, 28, 4), at: 1.8, t: 0.4 },
+      ],
+      packets: [
+        { path: 'M48 83H82M142 72C156 64 164 52 178 43', dur: 2.2 },
+        { path: 'M48 83H82M142 83H178', dur: 2.2, begin: 0.7 },
+        { path: 'M48 83H82M142 94C156 102 164 114 178 123', dur: 2.2, begin: 1.4 },
+      ],
+      pkAt: 2.5,
+      pkR: 3.8,
+      texts: [
+        { x: 25, y: 135, s: 'l’appli', at: 0.8, size: 16 },
+        { x: 112, y: 88, s: 'API', at: 1.2, size: 14, kind: 'disp' },
+        { x: 215, y: 47, s: 'comptes', at: 1.9, size: 16 },
+        { x: 215, y: 88, s: 'matchs', at: 2, size: 16 },
+        { x: 215, y: 129, s: 'classements', at: 2.1, size: 15 },
+      ],
+    },
+  },
+  heritage: {
+    viewBox: '0 0 300 150',
+    label: 'Croquis au feutre : du catalogue de robes au paiement, puis à la livraison.',
+    scene: {
+      ink: [
+        { d: 'M48 26c-5-1-6-9 0-10 6 0 6 8 0 10v7', at: 0.1, t: 0.4 },
+        { d: 'M48 33L28 47L34 56L40 51L35 90H61L56 51L62 56L68 47Z', at: 0.4, t: 0.7 },
+        { d: arrow(78, 58, 112, 58), at: 1, t: 0.3 },
+        { d: box(122, 38, 56, 40, 6), at: 1.2 },
+        { d: 'M122 51H178M130 63H146M130 70H140', at: 1.5, t: 0.3, w: 1.7 },
+        { d: arrow(186, 58, 220, 58), at: 1.7, t: 0.3 },
+        { d: box(228, 40, 48, 42, 3), at: 1.9 },
+        { d: 'M228 53H276M246 40V53M258 40V53', at: 2.2, t: 0.3, w: 1.7 },
+      ],
+      packets: [{ path: 'M78 58H114M186 58H222', dur: 2.4 }],
+      pkAt: 2.7,
+      pkR: 4.2,
+      texts: [
+        { x: 48, y: 114, s: 'catalogue', at: 0.9 },
+        { x: 48, y: 134, s: 'essayage réservé', at: 1, size: 16, fill: blue },
+        { x: 150, y: 114, s: 'paiement', at: 1.6 },
+        { x: 150, y: 134, s: 'Stripe', at: 1.7, size: 16, fill: blue },
+        { x: 252, y: 114, s: 'livraison', at: 2.3 },
+        { x: 252, y: 134, s: 'Sendcloud', at: 2.4, size: 16, fill: blue },
+      ],
+    },
+  },
+  storm: {
+    viewBox: '0 0 300 170',
+    label: 'Croquis au feutre : des clients connectés à deux passerelles en Rust, un bus de messages, puis les services de messages et de présence.',
+    scene: {
+      ink: [
+        { d: box(12, 14, 34, 20, 7) + 'M20 34L18 41L29 34', at: 0.1, t: 0.4 },
+        { d: box(12, 52, 34, 20, 7) + 'M20 72L18 79L29 72', at: 0.25, t: 0.4 },
+        { d: box(12, 90, 34, 20, 7) + 'M20 110L18 117L29 110', at: 0.4, t: 0.4 },
+        { d: arrow(48, 26, 84, 36), at: 0.7, t: 0.25 },
+        { d: arrow(48, 64, 84, 84), at: 0.8, t: 0.25 },
+        { d: arrow(48, 100, 84, 96), at: 0.9, t: 0.25 },
+        { d: arrow(152, 39, 172, 39, 7), at: 1.4, t: 0.2 },
+        { d: arrow(152, 93, 172, 93, 7), at: 1.5, t: 0.2 },
+        { d: 'M178 12Q179.5 66 178 122', at: 1.6, t: 0.5, w: 3.4 },
+        { d: arrow(184, 35, 200, 35, 7), at: 1.9, t: 0.2 },
+        { d: arrow(184, 99, 200, 99, 7), at: 2, t: 0.2 },
+        { d: box(204, 20, 88, 30, 4), at: 2.1, t: 0.4 },
+        { d: box(204, 84, 88, 30, 4), at: 2.2, t: 0.4 },
+      ],
+      blue: [
+        { d: box(88, 22, 62, 34, 5), at: 1, t: 0.45 },
+        { d: box(88, 76, 62, 34, 5), at: 1.15, t: 0.45 },
+      ],
+      packets: [
+        { path: 'M48 26L84 36M152 39H176M184 35H202', dur: 2.4 },
+        { path: 'M48 100L84 96M152 93H176M184 99H202', dur: 2.4, begin: 0.8 },
+        { path: 'M48 64L84 84M152 93H176M184 35H202', dur: 2.4, begin: 1.6 },
+      ],
+      pkAt: 2.7,
+      pkR: 3.8,
+      texts: [
+        { x: 25, y: 137, s: 'clients', at: 0.6, size: 16 },
+        { x: 119, y: 44, s: 'Rust', at: 1.3, size: 13, kind: 'disp' },
+        { x: 119, y: 98, s: 'Rust', at: 1.4, size: 13, kind: 'disp' },
+        { x: 119, y: 137, s: 'passerelles', at: 1.5, size: 16 },
+        { x: 178, y: 137, s: 'bus', at: 1.8, size: 16 },
+        { x: 248, y: 40, s: 'messages', at: 2.3, size: 16 },
+        { x: 248, y: 104, s: 'présence', at: 2.4, size: 16 },
+        { x: 150, y: 162, s: 'objectif : 100 000 connexions', at: 2.6, size: 18, fill: 'var(--red)' },
+      ],
+    },
+  },
+  'hadjime-dem': {
+    viewBox: '0 0 300 150',
+    label: 'Croquis au feutre : du devis à la relance par e-mail, puis à la facture.',
+    scene: {
+      ink: [
+        { d: box(26, 28, 44, 58, 4), at: 0.1 },
+        { d: 'M34 42H62M34 52H62M34 62H52', at: 0.4, t: 0.3, w: 1.7 },
+        { d: arrow(78, 58, 114, 58), at: 0.8, t: 0.3 },
+        { d: box(124, 38, 52, 38, 4), at: 1 },
+        { d: 'M126 42L150 60L174 42', at: 1.3, t: 0.3, w: 1.9 },
+        { d: arrow(184, 58, 220, 58), at: 1.5, t: 0.3 },
+        { d: box(230, 28, 44, 58, 4), at: 1.7 },
+        { d: 'M238 42H266M238 52H258', at: 2, t: 0.3, w: 1.7 },
+      ],
+      packets: [{ path: 'M78 58H116M184 58H222', dur: 2.4 }],
+      pkAt: 2.5,
+      pkR: 4.2,
+      texts: [
+        { x: 48, y: 114, s: 'devis', at: 0.7 },
+        { x: 48, y: 134, s: 'automatique', at: 0.8, size: 16, fill: blue },
+        { x: 150, y: 114, s: 'relance', at: 1.4 },
+        { x: 150, y: 134, s: 'par e-mail', at: 1.5, size: 16, fill: blue },
+        { x: 252, y: 77, s: '€', at: 2.1, size: 17, kind: 'disp' },
+        { x: 252, y: 114, s: 'facture', at: 2.2 },
+        { x: 252, y: 134, s: 'cycle bouclé', at: 2.3, size: 16, fill: blue },
+      ],
+    },
+  },
+};
+
+const ledColors = ['#e5484d', '#f5732a', '#f5a524', '#ffe45c', '#7bc86c', '#1f9d55', '#2f9fea', '#2f5bea', '#8b5cf6'];
+const leds = [0, 1, 2, 3].flatMap((j) =>
+  ledColors.map((c, i) => ({
+    d: ring(22 + i * 32, 20 + j * 29, 10),
+    style: `--d:${(0.1 + (i + j) * 0.05).toFixed(2)}s;--t:.35s;--c:${c};--ld:${(-(i * 0.12 + j * 0.08)).toFixed(2)}s`,
+  })),
+);
+const s = scenes[slug];
+---
+
+{
+  slug === 'aled' && (
+    <Sk viewBox="0 0 300 150" label="Croquis au feutre d’un mur de LED : des pastilles qui se colorent en vague, au tempo.">
+      <g class="ink" filter="url(#wob-s)">
+        {leds.map((l) => (
+          <path class="draw led" pathLength="1" d={l.d} style={l.style} stroke-width="1.7" />
+        ))}
+      </g>
+      <g class="txt">
+        <text class="lbl hand" x="150" y="144" text-anchor="middle" font-size="19" fill="var(--blue)" style="--d:1.2s">
+          ♪ ça pulse au tempo
+        </text>
+      </g>
+    </Sk>
+  )
+}
+{
+  s && (
+    <Sk viewBox={s.viewBox} label={s.label}>
+      <Draw small {...s.scene} />
+    </Sk>
+  )
+}

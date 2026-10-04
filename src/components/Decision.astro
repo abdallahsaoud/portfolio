@@ -1,0 +1,48 @@
+---
+// Une décision de l'étude de cas : fiche numérotée, schéma éventuel, puis problème / choix / résultat.
+import type { Decision } from '../data/scorecast';
+import Migration from './sketches/Migration.astro';
+import Analytics from './sketches/Analytics.astro';
+import Dedup from './sketches/Dedup.astro';
+import { loop } from './sketches/sk';
+import { typo } from '../utils/typo';
+
+interface Props {
+  decision: Decision;
+  k: number;
+}
+
+const { decision: d, k } = Astro.props;
+const parts = [
+  { cls: 'p', mark: '✗', label: 'Problème', text: d.problem },
+  { cls: 'c', mark: '→', label: 'Choix', text: d.choice },
+  { cls: 'r', mark: '✓', label: 'Résultat', text: d.result },
+];
+---
+
+<article class="dec rv" id={`point-${d.n}`} data-play data-hover>
+  <header class="dec-head">
+    <span class="dec-n" aria-hidden="true">
+      <svg viewBox="0 0 64 60" preserveAspectRatio="none"><path class="dr" pathLength="1" style={`--d:.35s;--t:.7s`} d={loop(32, 30, 27, 23)}></path></svg>
+      {d.n}
+    </span>
+    <h3>{d.title}</h3>
+    <span class="dec-tag" style={`rotate:${k % 2 ? '-1.5deg' : '2deg'}`}>{d.tag}</span>
+  </header>
+  {d.diagram === 'migration' && <Migration caption={d.caption} />}
+  {d.diagram === 'analytics' && <Analytics caption={d.caption} />}
+  {d.diagram === 'dedup' && <Dedup caption={d.caption} />}
+  <div class="pcr">
+    {
+      parts.map((p, j) => (
+        <div class:list={[p.cls, 'rv']} style={`--d:${(0.2 + j * 0.12).toFixed(2)}s`}>
+          <h4>
+            <span aria-hidden="true">{p.mark}</span>
+            {p.label}
+          </h4>
+          <p>{typo(p.text)}</p>
+        </div>
+      ))
+    }
+  </div>
+</article>

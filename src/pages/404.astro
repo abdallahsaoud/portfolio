@@ -1,0 +1,65 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import sad from '../assets/memoji-sad.png';
+---
+
+<Base
+  title="Page introuvable · Abdallah Saoud"
+  description="Cette page n’existe pas ou a été déplacée."
+  page="autre"
+  noindex
+>
+  <section class="nf wrap" data-play>
+    <Image class="rv" src={sad} alt="Le memoji d’Abdallah, triste" height={320} />
+    <div>
+      <span class="over rv" style="--d:.1s">erreur 404</span>
+      <h1 class="rv" style="--d:.18s">Cette page <mark>n’existe pas.</mark></h1>
+      <p class="rv" style="--d:.28s">
+        Le lien est peut-être ancien, ou l’adresse mal recopiée. Tout le reste est à sa place.
+      </p>
+      <a class="btn rv" style="--d:.38s" href="/">Retour à l’accueil</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    min-height: 62vh;
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+  .nf :global(img) {
+    width: auto;
+    height: 320px;
+    flex: none;
+    filter: drop-shadow(0 16px 20px rgba(31, 35, 40, 0.18));
+  }
+  h1 {
+    font: 800 clamp(34px, 5vw, 54px) / 1.06 var(--disp);
+    letter-spacing: -0.03em;
+    margin: 4px 0 14px;
+  }
+  p {
+    color: var(--mut);
+    font-size: 17px;
+    line-height: 1.6;
+    max-width: 420px;
+    margin: 0 0 24px;
+  }
+  @media (max-width: 760px) {
+    .nf {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+      padding-top: 28px;
+    }
+    .nf :global(img) {
+      height: 230px;
+    }
+  }
+</style>

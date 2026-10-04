@@ -1,0 +1,74 @@
+---
+// Accroche : le texte à gauche, le tableau blanc et le memoji qui le présente à droite.
+import { Image } from 'astro:assets';
+import happy from '../assets/memoji-happy.png';
+import { identite, contact } from '../data/site';
+import Sk from './sketches/Sk.astro';
+import Draw from './sketches/Draw.astro';
+import type { Scene } from './sketches/sk';
+import { typo } from '../utils/typo';
+
+const scene: Scene = {
+  ink: [
+    { d: 'M33 118H79Q90 118 90 129V235Q90 246 79 246H33Q22 246 22 235V129Q22 118 33 118Z', at: 0.3, t: 0.7 },
+    { d: 'M44 233H68', at: 0.8, t: 0.2 },
+    { d: 'M34 140H78M34 156H64M34 186H78V212H34Z', at: 0.85, t: 0.4, w: 1.8 },
+    { d: 'M98 182H158M148 174L158 182L148 190', at: 1, t: 0.4 },
+    { d: 'M173 148H247Q254 148 254 155V209Q254 216 247 216H173Q166 216 166 209V155Q166 148 173 148Z', at: 1.3, t: 0.6 },
+    { d: 'M260 166C284 150 298 124 320 113M309 110L320 113L315 123', at: 1.8, t: 0.4 },
+    { d: 'M260 182H320M310 174L320 182L310 190', at: 1.9, t: 0.4 },
+    { d: 'M260 198C284 214 298 242 320 253M315 242L320 253L309 256', at: 2, t: 0.4 },
+    { d: 'M334 88H440Q446 88 446 94V128Q446 134 440 134H334Q328 134 328 128V94Q328 88 334 88Z', at: 2.2 },
+    { d: 'M334 160H440Q446 160 446 166V200Q446 206 440 206H334Q328 206 328 200V166Q328 160 334 160Z', at: 2.3 },
+    { d: 'M334 232H440Q446 232 446 238V272Q446 278 440 278H334Q328 278 328 272V238Q328 232 334 232Z', at: 2.4 },
+  ],
+  red: [
+    { d: 'M152 150C150 90 250 62 330 64C420 64 468 84 464 180C462 262 440 298 340 298C240 300 150 262 152 150C152 130 160 112 174 100', at: 3, t: 1.1, w: 2.7 },
+    { d: 'M300 340C297 330 299 320 304 308M296 316L304 308L310 318', at: 4.1, t: 0.3, w: 2.7 },
+  ],
+  packets: [
+    { path: 'M98 182H162M258 166C284 150 298 124 326 112' },
+    { path: 'M98 182H162M258 182H326', begin: 0.8 },
+    { path: 'M98 182H162M258 198C284 214 298 242 326 254', begin: 1.6 },
+  ],
+  pkAt: 3.4,
+  texts: [
+    { x: 56, y: 273, s: 'l’appli', at: 0.9, size: 24 },
+    { x: 6, y: 296, s: '(ce qu’on voit)', at: 1, size: 21, anchor: 'start', fill: 'var(--mut)' },
+    { x: 210, y: 189, s: 'API', at: 1.7, size: 21, kind: 'disp' },
+    { x: 387, y: 118, s: 'comptes', at: 2.6, size: 23 },
+    { x: 387, y: 190, s: 'matchs', at: 2.7, size: 23 },
+    { x: 387, y: 262, s: 'classements', at: 2.8, size: 23 },
+    { x: 300, y: 367, s: 'mon terrain préféré', at: 4.2, size: 28, fill: 'var(--red)' },
+  ],
+};
+---
+
+<section class="hero wrap">
+  <div class="h-text" data-play>
+    <p class="h-note rv" style="--d:1.7s">
+      <svg viewBox="0 0 58 40" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path class="dr" pathLength="1" style="--d:2s" d="M54 6C32 2 14 12 8 34M5 22l3 12 11-6"></path>
+      </svg>
+      {contact.statut}
+    </p>
+    <h1 class="rv" style="--d:.1s">
+      {identite.nom}.<br />{identite.titre.replace('full-stack,', '')}<span class="nw">full-stack,</span>{' '}<mark>{identite.titreAccent}</mark>
+    </h1>
+    <p class="h-lead rv" style="--d:.3s">{typo(identite.accroche)}</p>
+    <div class="h-cta rv" style="--d:.45s">
+      <a class="btn" href="#projets">Voir les projets</a>
+      <a class="lnk" href="#contact">contact →</a>
+    </div>
+  </div>
+
+  <div class="stage">
+    <Sk class="board" viewBox="0 0 470 380" label="Tableau blanc : l’appli appelle une API, qui répartit vers trois services. L’API et les services sont entourés au feutre rouge : mon terrain préféré.">
+      <Draw {...scene} />
+    </Sk>
+    <div class="h-me" data-play>
+      <p class="bulle rv" style="--d:.9s">Salut, bienvenue&nbsp;!</p>
+      <Image class="memoji" src={happy} alt="Le memoji d’Abdallah, les bras levés, debout à côté du tableau" width={460} loading="eager" />
+    </div>
+  </div>
+</section>

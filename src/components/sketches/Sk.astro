@@ -1,0 +1,27 @@
+---
+// Cadre d'un croquis : il se dessine quand il arrive à l'écran (data-play).
+// Avec `mViewBox`, le slot "mobile" fournit une composition pensée pour le téléphone.
+interface Props {
+  viewBox: string;
+  mViewBox?: string;
+  label: string;
+  caption?: string;
+  class?: string;
+}
+
+const { viewBox, mViewBox, label, caption, class: cls } = Astro.props;
+---
+
+<figure class:list={['sk-fig', cls]} data-play>
+  <svg class:list={[{ 'only-d': mViewBox }]} viewBox={viewBox} fill="none" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label={label}>
+    <slot />
+  </svg>
+  {
+    mViewBox && (
+      <svg class="only-m" viewBox={mViewBox} fill="none" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label={label}>
+        <slot name="mobile" />
+      </svg>
+    )
+  }
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

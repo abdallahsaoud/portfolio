@@ -11,6 +11,8 @@ export type Project = {
   note?: string;
   tags: string[];
   links: ProjectLink[];
+  // Mention affichée à la place des liens quand il n'y en a pas.
+  sansLien?: string;
 };
 
 export const projects: Project[] = [
@@ -35,13 +37,42 @@ export const projects: Project[] = [
         lead: 'Des tâches de fond fiabilisées en production',
         text: ': correctifs livrés en hotfix, jobs rendus idempotents, tests de charge avant le lancement.',
       },
+      {
+        lead: 'Un back-office en Nuxt et Vue',
+        text: 'pour l’équipe : une soixantaine de pages et composants, des graphiques en SVG maison, une couche d’API typée.',
+      },
     ],
-    tags: ['NestJS', 'PostgreSQL', 'NATS', 'BullMQ', 'Kubernetes', 'Nuxt'],
+    tags: ['NestJS', 'PostgreSQL', 'NATS', 'BullMQ', 'Kubernetes', 'Nuxt', 'Vue'],
     links: [{ label: 'Lire l’étude de cas', href: '/projets/scorecast' }],
   },
   {
-    slug: 'heritage',
+    slug: 'hadjime-dem',
     index: '02',
+    title: 'Hadjime Dem',
+    status: '● outils internes',
+    meta: 'entreprise de déménagement · première alternance · 2023 → 2024',
+    summary: 'Des outils métier pour l’équipe commerciale, développés pendant ma première alternance.',
+    points: [
+      {
+        lead: 'Générateur automatique de devis',
+        text: 'à partir des paramètres d’un déménagement.',
+      },
+      {
+        lead: 'Relances automatiques par e-mail',
+        text: 'des devis restés sans réponse, et campagnes de mailing vers prospects et clients.',
+      },
+      {
+        lead: 'Module de facturation',
+        text: 'pour clore le cycle du devis à la facture.',
+      },
+    ],
+    tags: ['NestJS', 'Angular'],
+    links: [],
+    sansLien: 'outil interne, pas de lien public',
+  },
+  {
+    slug: 'heritage',
+    index: '03',
     title: 'Héritage',
     status: '● en ligne',
     meta: 'projet personnel · 2025 → 2026',
@@ -67,8 +98,35 @@ export const projects: Project[] = [
     links: [{ label: 'Voir le site', href: 'https://heritage-alg.com/', external: true }],
   },
   {
+    slug: 'storm',
+    index: '04',
+    title: 'STORM',
+    status: '● démo',
+    meta: 'HETIC · en équipe · février → avril 2026',
+    summary:
+      'Messagerie temps réel façon Slack ou Discord, avec salons publics ou privés, conçue en équipe pour tenir la charge. Objectif fixé : 100 000 connexions WebSocket simultanées pour moins de 700 € d’infrastructure.',
+    points: [
+      {
+        lead: 'Une passerelle WebSocket en Rust',
+        text: 'derrière un répartiteur de charge : elle authentifie, vérifie l’appartenance au salon et ne diffuse un message qu’à ses membres.',
+      },
+      {
+        lead: 'Des services découplés par un bus',
+        text: ': les messages passent par un flux Valkey avant d’être écrits par lots dans PostgreSQL ; la présence en ligne repose sur des clés à expiration.',
+      },
+      {
+        lead: 'Une charge mesurée, pas supposée',
+        text: ': objectifs de service chiffrés, tests de charge k6 et Locust, scripts de chaos, tableaux de bord Prometheus et Grafana sur Kubernetes.',
+      },
+    ],
+    note:
+      'Ce que j’en retiens : le premier test de charge a révélé une écriture en base message par message. En passant aux insertions par lots, la latence est tombée de 2 secondes à moins de 30 millisecondes.',
+    tags: ['Rust', 'Axum', 'WebSocket', 'Valkey', 'PostgreSQL', 'Kubernetes', 'k6'],
+    links: [],
+  },
+  {
     slug: 'aled',
-    index: '03',
+    index: '05',
     title: 'Aled',
     status: '● démo',
     meta: 'HETIC · équipe de 4 · juillet 2026',
@@ -92,55 +150,5 @@ export const projects: Project[] = [
       'Réalisé en grande partie avec des assistants IA, compris et défendu en soutenance : c’est là que j’ai appris DMX, Art-Net et l’analyse audio.',
     tags: ['Electron', 'React', 'TypeScript', 'Web Audio', 'vitest'],
     links: [{ label: 'Code sur GitHub', href: 'https://github.com/Samy951/Aled', external: true }],
-  },
-  {
-    slug: 'super-pong',
-    index: '04',
-    title: 'SUPER_PONG',
-    status: '● démo',
-    meta: 'HETIC · en équipe · juin 2026',
-    summary: 'Pong multijoueur en réseau sous Unity. Ma part : la communication entre les joueurs, pas le jeu.',
-    points: [
-      {
-        lead: 'Transport hybride',
-        text: ': TCP pour ce qui doit être fiable (connexion, lobby, état de partie), UDP pour les positions à haute fréquence, afin de réduire le lag ressenti.',
-      },
-      {
-        lead: 'Protocole binaire maison',
-        text: 'avec ses sockets UDP, ses diagnostics et ses traces réseau, pour voir ce qui passe réellement sur le fil.',
-      },
-      {
-        lead: 'Rejoindre ou quitter en cours de partie',
-        text: 'sans raquette fantôme ni fausse fin de partie ; démarrage uniquement avec les joueurs prêts.',
-      },
-    ],
-    note:
-      'Ce que j’en retiens : l’arbitrage entre fiabilité et latence, l’idempotence des messages, un état de référence côté serveur.',
-    tags: ['Unity', 'C#', 'UDP', 'TCP'],
-    links: [{ label: 'Code sur GitHub', href: 'https://github.com/abdallahsaoud/SUPER_PONG', external: true }],
-  },
-  {
-    slug: 'hadjime-dem',
-    index: '05',
-    title: 'Hadjime Dem',
-    status: '● outils internes',
-    meta: 'entreprise de déménagement · première alternance · 2023 → 2024',
-    summary: 'Des outils métier pour l’équipe commerciale, développés pendant ma première alternance.',
-    points: [
-      {
-        lead: 'Générateur automatique de devis',
-        text: 'à partir des paramètres d’un déménagement.',
-      },
-      {
-        lead: 'Relances automatiques par e-mail',
-        text: 'des devis restés sans réponse, et campagnes de mailing vers prospects et clients.',
-      },
-      {
-        lead: 'Module de facturation',
-        text: 'pour clore le cycle du devis à la facture.',
-      },
-    ],
-    tags: ['NestJS', 'Angular'],
-    links: [],
   },
 ];

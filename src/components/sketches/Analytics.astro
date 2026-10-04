@@ -1,0 +1,114 @@
+---
+// Décision 03 : le microservice d'analytics et ses tranches de cinq minutes.
+import Sk from './Sk.astro';
+import Draw from './Draw.astro';
+import { box, arrow, db, tip, type Scene } from './sk';
+
+interface Props {
+  caption?: string;
+}
+
+const { caption } = Astro.props;
+const blue = 'var(--blue)';
+const red = 'var(--red)';
+const mut = 'var(--mut)';
+
+const desktop: Scene = {
+  ink: [
+    { d: box(16, 96, 130, 54, 6), at: 0.2 },
+    { d: arrow(150, 123, 186, 123), at: 0.6, t: 0.3 },
+    { d: box(190, 96, 120, 54, 6), at: 0.8 },
+    { d: arrow(314, 123, 350, 123), at: 1.2, t: 0.3 },
+    { d: arrow(572, 123, 608, 123), at: 2, t: 0.3 },
+    { d: box(612, 96, 130, 54, 6), at: 2.2 },
+    { d: arrow(461, 162, 461, 194), at: 2.6, t: 0.3 },
+    { d: db(461, 208, 60, 34, 9), at: 2.8, t: 0.7 },
+    { d: tip(675, 157, -70), at: 3.4, t: 0.2 },
+    { d: 'M356 -13C410 -18 500 -9 556 -16', at: 3.9, t: 0.4, color: red, w: 2.6 },
+  ],
+  blue: [{ d: box(354, 88, 214, 70, 8), at: 1.4, t: 0.6, w: 3 }],
+  dash: [
+    { d: 'M250 92C330 20 566 20 664 92', at: 3.5, color: mut },
+    { d: 'M523 232C606 232 658 202 674 160', at: 3.2, color: mut },
+  ],
+  packets: [{ path: 'M150 123H188M314 123H352M461 162V202', dur: 2.6 }],
+  pkAt: 3.4,
+  texts: [
+    { x: 81, y: 129, s: 'Événements', at: 0.4, size: 20 },
+    { x: 168, y: 112, s: 'NATS', at: 0.7, size: 16, fill: mut },
+    { x: 250, y: 129, s: 'Ingestion', at: 1, size: 20 },
+    { x: 461, y: 117, s: 'Tranches de 5 min', at: 1.6, size: 17, kind: 'disp' },
+    { x: 461, y: 141, s: 'cron · rattrapage des trous', at: 1.7, size: 17 },
+    { x: 677, y: 120, s: 'API', at: 2.3, size: 18, kind: 'disp' },
+    { x: 677, y: 141, s: 'back-office', at: 2.4, size: 17 },
+    { x: 461, y: 237, s: 'métriques', at: 3 },
+    { x: 610, y: 246, s: 'lecture seule', at: 3.3, size: 17, anchor: 'start', fill: mut },
+    { x: 461, y: 296, s: 'PostgreSQL · flux incrémentés · états recalculés', at: 3.4, size: 17, fill: mut },
+    { x: 456, y: -8, s: 'recalcul à chaque requête', at: 3.6, fill: mut },
+    { x: 456, y: 17, s: 'WAU / MAU ne s’additionnent pas entre tranches', at: 4, size: 18, fill: red },
+    { x: 310, y: 191, s: '← 5 min chacune', at: 2.4, size: 16, anchor: 'start', fill: mut },
+    { x: 16, y: 240, s: '1 jour = 288 tranches', at: 4.2, anchor: 'start', fill: blue },
+    { x: 16, y: 264, s: 'reprise exacte après panne', at: 4.3, anchor: 'start', fill: blue },
+  ],
+};
+
+const mobile: Scene = {
+  ink: [
+    { d: box(95, 8, 150, 46, 6), at: 0.2 },
+    { d: arrow(170, 58, 170, 88), at: 0.6, t: 0.3 },
+    { d: box(95, 92, 150, 46, 6), at: 0.8 },
+    { d: arrow(170, 142, 170, 172), at: 1.2, t: 0.3 },
+    { d: arrow(170, 292, 170, 322), at: 2.4, t: 0.3 },
+    { d: db(170, 336, 62, 36, 9), at: 2.6, t: 0.7 },
+    { d: tip(170, 426, 90), at: 3.1, t: 0.2 },
+    { d: box(95, 430, 150, 54, 6), at: 3.2 },
+    { d: 'M66 517C120 512 220 521 276 514', at: 4, t: 0.4, color: red, w: 2.6 },
+  ],
+  blue: [{ d: box(50, 176, 240, 70, 8), at: 1.4, t: 0.6, w: 3 }],
+  dash: [{ d: 'M170 394V424', at: 3, color: mut }],
+  packets: [{ path: 'M170 58V90M170 142V174M170 292V328', dur: 2.8 }],
+  pkAt: 3.2,
+  texts: [
+    { x: 170, y: 38, s: 'Événements', at: 0.4, size: 20 },
+    { x: 182, y: 79, s: 'NATS', at: 0.7, size: 17, anchor: 'start', fill: mut },
+    { x: 170, y: 122, s: 'Ingestion', at: 1, size: 20 },
+    { x: 170, y: 205, s: 'Tranches de 5 min', at: 1.6, size: 17, kind: 'disp' },
+    { x: 170, y: 229, s: 'cron · rattrapage des trous', at: 1.7, size: 17 },
+    { x: 170, y: 365, s: 'métriques', at: 2.9 },
+    { x: 182, y: 414, s: 'lecture seule', at: 3.1, size: 17, anchor: 'start', fill: mut },
+    { x: 170, y: 454, s: 'API', at: 3.3, size: 18, kind: 'disp' },
+    { x: 170, y: 474, s: 'back-office', at: 3.4, size: 17 },
+    { x: 170, y: 522, s: 'recalcul à chaque requête', at: 3.7, fill: mut },
+    { x: 170, y: 548, s: 'WAU / MAU ne s’additionnent pas', at: 4.1, size: 18, fill: red },
+    { x: 170, y: 568, s: 'entre tranches', at: 4.15, size: 18, fill: red },
+    { x: 170, y: 600, s: '1 jour = 288 tranches', at: 4.3, fill: blue },
+    { x: 170, y: 622, s: 'reprise exacte après panne', at: 4.4, fill: blue },
+    { x: 170, y: 648, s: 'PostgreSQL · flux incrémentés · états recalculés', at: 4.5, size: 16, fill: mut },
+  ],
+};
+
+// Les tranches se remplissent une à une ; le trou (en rouge) est rattrapé en dernier.
+const slices = (n: number, x0: number, y: number, hole: number, at: number) =>
+  Array.from({ length: n }, (_, k) => ({
+    d: box(x0 + k * 24, y, 18, 18, 3),
+    style: `--d:${(at + k * 0.04).toFixed(2)}s;--t:.25s;--sd:${(k === hole ? n * 0.28 : k * 0.28).toFixed(2)}s${k === hole ? ';--fc:var(--red)' : ''}`,
+  }));
+---
+
+<Sk
+  viewBox="0 -32 760 342"
+  mViewBox="0 0 340 656"
+  caption={caption}
+  label="Schéma au feutre du microservice d’analytics : les événements arrivent par NATS, sont ingérés, puis rangés en tranches de cinq minutes recalculées par une tâche planifiée qui rattrape les trous. Les métriques sont stockées dans PostgreSQL et lues par l’API du back-office. Recalculer à chaque requête ne marche pas : les actifs par semaine ou par mois ne s’additionnent pas entre tranches."
+>
+  <Draw {...desktop} />
+  <g class="ink" filter="url(#wob-s)">
+    {slices(12, 16, 176, 7, 1.9).map((s) => <path class="draw slice" pathLength="1" d={s.d} style={s.style} stroke-width="1.6" />)}
+  </g>
+  <Fragment slot="mobile">
+    <Draw {...mobile} />
+    <g class="ink" filter="url(#wob-s)">
+      {slices(10, 51, 258, 6, 1.9).map((s) => <path class="draw slice" pathLength="1" d={s.d} style={s.style} stroke-width="1.6" />)}
+    </g>
+  </Fragment>
+</Sk>

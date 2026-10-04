@@ -1,0 +1,112 @@
+---
+// Décision 04 : la collision d'identifiants de tâches, avant et après.
+import Sk from './Sk.astro';
+import Draw from './Draw.astro';
+import { box, arrow, stroke, type Scene } from './sk';
+
+interface Props {
+  caption?: string;
+}
+
+const { caption } = Astro.props;
+const blue = 'var(--blue)';
+const red = 'var(--red)';
+const grn = 'var(--grn)';
+const mut = 'var(--mut)';
+
+const desktop: Scene = {
+  ink: [
+    { d: stroke(16, 38, 744, 38), at: 0.2, t: 0.6, w: 1.4, color: mut },
+    { d: box(16, 52, 250, 58, 6), at: 0.5 },
+    { d: box(370, 210, 240, 58, 6), at: 2.7 },
+    { d: arrow(364, 239, 274, 239), at: 3, t: 0.3 },
+  ],
+  red: [{ d: 'M628 64l15 15M643 64l-15 15', at: 1.6, t: 0.3, w: 3 }],
+  grn: [
+    { d: stroke(16, 196, 744, 196), at: 2, t: 0.6, w: 1.6 },
+    { d: box(16, 210, 250, 58, 6), at: 2.3, w: 3 },
+    { d: 'M628 240l7 8 14-17', at: 3.4, t: 0.3, w: 3 },
+  ],
+  dash: [
+    { d: 'M272 81H364', at: 1, color: mut },
+    { d: box(370, 52, 240, 58, 6), at: 1.1 },
+  ],
+  packets: [
+    { path: 'M364 81H282', dur: 2, fill: red },
+    { path: 'M364 239H278', dur: 2, begin: 0.7 },
+  ],
+  pkAt: 3.6,
+  texts: [
+    { x: 16, y: 28, s: 'AVANT', at: 0.1, size: 22, anchor: 'start', fill: red },
+    { x: 28, y: 77, s: 'job classement-42 ✓ fini', at: 0.7, anchor: 'start' },
+    { x: 28, y: 98, s: 'conservé après exécution', at: 0.8, size: 16, anchor: 'start', fill: mut },
+    { x: 318, y: 70, s: 'même id', at: 1, size: 17, fill: mut },
+    { x: 382, y: 77, s: 'nouveau job classement-42', at: 1.2, anchor: 'start' },
+    { x: 382, y: 98, s: 'correction de score', at: 1.3, size: 16, anchor: 'start', fill: mut },
+    { x: 652, y: 80, s: 'ignoré', at: 1.7, size: 22, anchor: 'start', fill: red },
+    { x: 628, y: 103, s: 'sans erreur', at: 1.8, size: 16, anchor: 'start', fill: mut },
+    { x: 16, y: 142, s: 'pic : des milliers de compétitions sur un même match → des classements jamais recalculés', at: 1.9, size: 17, anchor: 'start', fill: mut },
+    { x: 16, y: 186, s: 'APRÈS', at: 2, size: 22, anchor: 'start', fill: grn },
+    { x: 28, y: 235, s: 'job actif · dedup: cl-42', at: 2.5, anchor: 'start' },
+    { x: 28, y: 256, s: 'libère l’id une fois fini', at: 2.6, size: 16, anchor: 'start', fill: mut },
+    { x: 319, y: 226, s: 'keepLastIfActive', at: 3.1, size: 16, fill: blue },
+    { x: 382, y: 235, s: 'nouveau job classement-42', at: 2.9, anchor: 'start' },
+    { x: 382, y: 256, s: 'remplace celui en attente', at: 3, size: 16, anchor: 'start', fill: mut },
+    { x: 656, y: 247, s: 'conservé', at: 3.5, size: 22, anchor: 'start', fill: grn },
+    { x: 628, y: 270, s: 'le dernier gagne', at: 3.6, size: 16, anchor: 'start', fill: mut },
+    { x: 16, y: 302, s: 'dédoublonnage natif de la file · hotfix en production, puis généralisé à 7 planificateurs', at: 3.7, size: 17, anchor: 'start', fill: mut },
+  ],
+};
+
+const mobile: Scene = {
+  ink: [
+    { d: box(16, 40, 308, 58, 6), at: 0.5 },
+    { d: box(16, 418, 308, 58, 6), at: 2.8 },
+    { d: arrow(170, 414, 170, 390), at: 3.1, t: 0.3 },
+  ],
+  red: [{ d: 'M16 204l14 14M30 204l-14 14', at: 1.6, t: 0.3, w: 3 }],
+  grn: [
+    { d: box(16, 326, 308, 58, 6), at: 2.3, w: 3 },
+    { d: 'M16 502l7 8 14-17', at: 3.4, t: 0.3, w: 3 },
+  ],
+  dash: [
+    { d: 'M170 102V128', at: 1, color: mut },
+    { d: box(16, 132, 308, 58, 6), at: 1.1 },
+  ],
+  packets: [
+    { path: 'M170 128V106', dur: 1.8, fill: red },
+    { path: 'M170 414V390', dur: 1.8, begin: 0.7 },
+  ],
+  pkAt: 3.6,
+  texts: [
+    { x: 16, y: 28, s: 'AVANT', at: 0.1, size: 22, anchor: 'start', fill: red },
+    { x: 28, y: 65, s: 'job classement-42 ✓ fini', at: 0.7, anchor: 'start' },
+    { x: 28, y: 86, s: 'conservé après exécution', at: 0.8, size: 16, anchor: 'start', fill: mut },
+    { x: 182, y: 121, s: 'même id', at: 1, size: 17, anchor: 'start', fill: mut },
+    { x: 28, y: 157, s: 'nouveau job classement-42', at: 1.2, anchor: 'start' },
+    { x: 28, y: 178, s: 'correction de score', at: 1.3, size: 16, anchor: 'start', fill: mut },
+    { x: 40, y: 219, s: 'ignoré, sans erreur', at: 1.7, size: 21, anchor: 'start', fill: red },
+    { x: 16, y: 248, s: 'pic : des milliers de compétitions sur un même', at: 1.9, size: 16, anchor: 'start', fill: mut },
+    { x: 16, y: 268, s: 'match → des classements jamais recalculés', at: 1.95, size: 16, anchor: 'start', fill: mut },
+    { x: 16, y: 314, s: 'APRÈS', at: 2, size: 22, anchor: 'start', fill: grn },
+    { x: 28, y: 351, s: 'job actif · dedup: cl-42', at: 2.5, anchor: 'start' },
+    { x: 28, y: 372, s: 'libère l’id une fois fini', at: 2.6, size: 16, anchor: 'start', fill: mut },
+    { x: 182, y: 407, s: 'keepLastIfActive', at: 3.2, size: 16, anchor: 'start', fill: blue },
+    { x: 28, y: 443, s: 'nouveau job classement-42', at: 2.9, anchor: 'start' },
+    { x: 28, y: 464, s: 'remplace celui en attente', at: 3, size: 16, anchor: 'start', fill: mut },
+    { x: 46, y: 517, s: 'conservé, le dernier gagne', at: 3.5, size: 21, anchor: 'start', fill: grn },
+    { x: 16, y: 546, s: 'dédoublonnage natif de la file · hotfix en', at: 3.7, size: 16, anchor: 'start', fill: mut },
+    { x: 16, y: 566, s: 'production, puis généralisé à 7 planificateurs', at: 3.75, size: 16, anchor: 'start', fill: mut },
+  ],
+};
+---
+
+<Sk
+  viewBox="0 0 760 312"
+  mViewBox="0 0 340 576"
+  caption={caption}
+  label="Schéma au feutre, avant et après. Avant : la tâche classement-42 terminée est conservée, la nouvelle tâche porte le même identifiant et est ignorée sans erreur. Après : dédoublonnage natif de la file, la nouvelle tâche remplace celle en attente, la dernière est conservée."
+>
+  <Draw {...desktop} />
+  <Draw slot="mobile" {...mobile} />
+</Sk>

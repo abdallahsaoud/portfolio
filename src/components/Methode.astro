@@ -1,0 +1,32 @@
+---
+// « Comment je travaille » : trois post-its.
+import { methode, sections } from '../data/site';
+import { typo } from '../utils/typo';
+
+const looks = [
+  { r: '-1.6deg', c: '#fff3a8' },
+  { r: '1.2deg', c: '#d9e6ff' },
+  { r: '-.8deg', c: '#ffdfd4' },
+];
+---
+
+<section class="sec wrap" id="methode">
+  <div class="sec-head" data-play>
+    <div>
+      <span class="over rv">au quotidien</span>
+      <h2 class="rv" style="--d:.08s">{sections.methode.titre}</h2>
+    </div>
+  </div>
+  <ul class="postits">
+    {
+      methode.map((m, k) => (
+        <li class="postit rv" style={`--r:${looks[k % 3].r};--pc:${looks[k % 3].c};--d:${(k * 0.1).toFixed(1)}s`} data-play data-hover>
+          <span class="pn" aria-hidden="true">{k + 1}.</span>
+          <p>
+            <strong>{m.lead}</strong>{typo(m.text)}
+          </p>
+        </li>
+      ))
+    }
+  </ul>
+</section>

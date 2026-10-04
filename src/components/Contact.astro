@@ -1,0 +1,30 @@
+---
+// Contact : le memoji triste devient heureux quand on passe le voir.
+import { Image } from 'astro:assets';
+import happy from '../assets/memoji-happy.png';
+import sad from '../assets/memoji-sad.png';
+import { identite, contact, sections } from '../data/site';
+import { typo } from '../utils/typo';
+---
+
+<section class="sec wrap contact" id="contact" data-play data-hover>
+  <div class="c-text">
+    <span class="over rv">{contact.statut}</span>
+    <h2 class="rv" style="--d:.08s">{sections.contact.titre}</h2>
+    <a class="c-mail rv" style="--d:.16s;--hl:.7s" href={`mailto:${identite.email}`}><mark>{identite.email}</mark></a>
+    <p class="c-say rv" style="--d:.24s">{typo(contact.texte)}</p>
+    <div class="c-btns rv" style="--d:.32s">
+      <button class="btn" type="button" data-copy={identite.email}>Copier l’e-mail</button>
+      <a class="btn ghost" href={identite.github} target="_blank" rel="noopener">GitHub <span aria-hidden="true">→</span></a>
+      <a class="btn ghost" href={identite.linkedin} target="_blank" rel="noopener">LinkedIn <span aria-hidden="true">→</span></a>
+      <a class="btn ghost" href={identite.cv} target="_blank" rel="noopener">CV en PDF <span aria-hidden="true">→</span></a>
+    </div>
+  </div>
+  <div class="c-me rv" style="--d:.3s">
+    <p class="c-note">il sourit quand on passe le voir</p>
+    <div class="duo">
+      <Image class="sad" src={sad} alt="" width={270} />
+      <Image class="happy" src={happy} alt="Le memoji d’Abdallah, d’abord triste, puis les bras levés" width={440} />
+    </div>
+  </div>
+</section>

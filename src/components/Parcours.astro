@@ -1,0 +1,47 @@
+---
+// Le parcours : une frise tracée à la main, qui avance avec le défilement.
+import { parcours } from '../data/parcours';
+import { sections } from '../data/site';
+import { typo } from '../utils/typo';
+
+// Trait ondulé, étiré sur toute la hauteur de la frise.
+const wave = 'M10 0C16 40 4 80 10 120S16 200 10 240S4 320 10 360S16 440 10 480S4 560 10 600';
+---
+
+<section class="sec wrap" id="parcours">
+  <div class="sec-head" data-play>
+    <div>
+      <span class="over rv">d’où je viens</span>
+      <h2 class="rv" style="--d:.08s">{sections.parcours.titre}</h2>
+    </div>
+    <span class="sec-note rv" style="--d:.2s">{sections.parcours.note}</span>
+  </div>
+
+  <div class="frise" data-frise>
+    <div class="frise-bg" aria-hidden="true">
+      <svg viewBox="0 0 20 600" preserveAspectRatio="none"><path d={wave}></path></svg>
+    </div>
+    <div class="frise-ink" aria-hidden="true">
+      <svg viewBox="0 0 20 600" preserveAspectRatio="none"><path d={wave}></path></svg>
+    </div>
+    <i class="frise-tip" aria-hidden="true"></i>
+    <ol>
+      {
+        parcours.map((s) => (
+          <li class:list={['step', { now: s.actuel }]} data-step>
+            <span class="dotm" aria-hidden="true"></span>
+            <span class="when rv">
+              {s.when}
+              {s.actuel && <em>aujourd’hui</em>}
+            </span>
+            <div class="rv" style="--d:.08s">
+              <h3>{s.title}</h3>
+              {s.contrat && <span class="alt">{s.contrat}</span>}
+              <p>{typo(s.text)}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>

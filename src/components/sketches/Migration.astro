@@ -1,0 +1,104 @@
+---
+// Décision 01 : la migration du monolithe, une tâche relançable par compétition.
+import Sk from './Sk.astro';
+import Draw from './Draw.astro';
+import { box, arrow, curve, type Scene } from './sk';
+
+interface Props {
+  caption?: string;
+}
+
+const { caption } = Astro.props;
+const blue = 'var(--blue)';
+const red = 'var(--red)';
+const mut = 'var(--mut)';
+const jobs = [
+  ['job · compétition A', 'déjà migrée ? → ignorer', blue],
+  ['job · compétition B', 'déjà migrée ? → écrire', blue],
+  ['job · compétition C', 'relançable sans dégât', mut],
+];
+
+const dy = [36, 126, 216];
+const desktop: Scene = {
+  ink: [
+    { d: box(16, 60, 170, 130, 8), at: 0.2, t: 0.7 },
+    { d: box(34, 126, 134, 50, 6), at: 0.7, w: 1.8 },
+    { d: arrow(192, 152, 262, 152), at: 1.1, t: 0.3 },
+    { d: curve(452, 136, 482, 70, 506, 62), at: 1.9, t: 0.35 },
+    { d: arrow(452, 152, 506, 152), at: 2, t: 0.3 },
+    { d: curve(452, 168, 482, 238, 506, 242), at: 2.1, t: 0.35 },
+    ...dy.map((y, k) => ({ d: box(512, y, 232, 52, 6), at: 2.2 + k * 0.15 })),
+  ],
+  blue: [{ d: box(268, 116, 180, 72, 8), at: 1.4, t: 0.6, w: 3 }],
+  grn: [{ d: 'M712 147l7 8 14-17', at: 3.2, t: 0.3, w: 2.8 }],
+  dash: [
+    { d: 'M628 92V122', at: 2.8, color: mut },
+    { d: 'M628 182V212', at: 2.8, color: mut },
+  ],
+  packets: [
+    { path: 'M192 152H264M452 136Q482 70 508 62', dur: 2.6 },
+    { path: 'M192 152H264M452 152H508', dur: 2.6, begin: 0.85 },
+    { path: 'M192 152H264M452 168Q482 238 508 242', dur: 2.6, begin: 1.7 },
+  ],
+  pkAt: 3.2,
+  texts: [
+    { x: 101, y: 88, s: 'Monolithe V2', at: 0.5, size: 17, kind: 'disp' },
+    { x: 101, y: 110, s: 'MySQL · toujours en prod', at: 0.6, size: 17, fill: mut },
+    { x: 101, y: 149, s: 'export protégé', at: 0.9 },
+    { x: 101, y: 167, s: 'JWT', at: 1, size: 16, fill: mut },
+    { x: 227, y: 142, s: 'HTTP', at: 1.2, size: 17, fill: mut },
+    { x: 358, y: 147, s: 'Migration', at: 1.6, size: 18, kind: 'disp' },
+    { x: 358, y: 171, s: 'une tâche par compétition', at: 1.7, size: 17 },
+    ...dy.flatMap((y, k) => [
+      { x: 524, y: y + 22, s: jobs[k][0], at: 2.4 + k * 0.15, anchor: 'start' as const },
+      { x: 524, y: y + 43, s: jobs[k][1], at: 2.5 + k * 0.15, size: 17, anchor: 'start' as const, fill: jobs[k][2] },
+    ]),
+    { x: 744, y: 292, s: '→ PostgreSQL, une base par service', at: 3, size: 17, anchor: 'end', fill: mut },
+    { x: 16, y: 234, s: 'sans fenêtre de coupure :', at: 3.1, size: 20, anchor: 'start', fill: red },
+    { x: 16, y: 256, s: 'V2 et V3 tournent en parallèle', at: 3.2, size: 20, anchor: 'start', fill: red },
+    { x: 16, y: 284, s: 'reprise · fichier de progression · --dry-run', at: 3.4, size: 16, anchor: 'start', fill: mut },
+  ],
+};
+
+const my = [268, 348, 428];
+const mobile: Scene = {
+  ink: [
+    { d: box(40, 8, 260, 112, 8), at: 0.2, t: 0.7 },
+    { d: box(80, 66, 180, 44, 6), at: 0.7, w: 1.8 },
+    { d: arrow(170, 124, 170, 160), at: 1.1, t: 0.3 },
+    { d: 'M60 196H30V459', at: 1.9, t: 0.6 },
+    ...my.map((y, k) => ({ d: arrow(30, y + 31, 52, y + 31, 8), at: 2.2 + k * 0.1, t: 0.3 })),
+    ...my.map((y, k) => ({ d: box(56, y, 268, 62, 6), at: 2.3 + k * 0.15 })),
+  ],
+  blue: [{ d: box(60, 164, 220, 62, 8), at: 1.4, t: 0.6, w: 3 }],
+  grn: [{ d: 'M290 372l7 8 14-17', at: 3.2, t: 0.3, w: 2.8 }],
+  packets: my.map((y, k) => ({ path: `M170 124V162M60 196H30V${y + 31}H54`, dur: 2.8, begin: k * 0.9 })),
+  pkAt: 3.2,
+  texts: [
+    { x: 170, y: 34, s: 'Monolithe V2', at: 0.5, size: 17, kind: 'disp' },
+    { x: 170, y: 54, s: 'MySQL · toujours en prod', at: 0.6, size: 17, fill: mut },
+    { x: 170, y: 94, s: 'export protégé (JWT)', at: 0.9, size: 18 },
+    { x: 182, y: 148, s: 'HTTP', at: 1.2, size: 17, anchor: 'start', fill: mut },
+    { x: 170, y: 191, s: 'Migration', at: 1.6, size: 18, kind: 'disp' },
+    { x: 170, y: 213, s: 'une tâche par compétition', at: 1.7, size: 17 },
+    ...my.flatMap((y, k) => [
+      { x: 68, y: y + 25, s: jobs[k][0], at: 2.4 + k * 0.15, anchor: 'start' as const },
+      { x: 68, y: y + 47, s: jobs[k][1], at: 2.5 + k * 0.15, size: 17, anchor: 'start' as const, fill: jobs[k][2] },
+    ]),
+    { x: 324, y: 514, s: '→ PostgreSQL, une base par service', at: 3, size: 17, anchor: 'end', fill: mut },
+    { x: 16, y: 546, s: 'sans fenêtre de coupure :', at: 3.1, size: 20, anchor: 'start', fill: red },
+    { x: 16, y: 568, s: 'V2 et V3 tournent en parallèle', at: 3.2, size: 20, anchor: 'start', fill: red },
+    { x: 16, y: 592, s: 'reprise · fichier de progression · --dry-run', at: 3.4, size: 16, anchor: 'start', fill: mut },
+  ],
+};
+---
+
+<Sk
+  viewBox="0 0 760 300"
+  mViewBox="0 0 340 602"
+  caption={caption}
+  label="Schéma au feutre de la migration : le monolithe V2 expose un export protégé, le service de migration lance une tâche par compétition, chaque tâche vérifie si le travail est déjà fait avant d’écrire dans PostgreSQL. Les deux versions tournent en parallèle."
+>
+  <Draw {...desktop} />
+  <Draw slot="mobile" {...mobile} />
+</Sk>

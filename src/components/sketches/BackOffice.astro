@@ -1,0 +1,53 @@
+---
+// Le back-office : un écran d'administration avec son graphique en SVG maison (barres pour les flux, ligne pour les états).
+import Sk from './Sk.astro';
+import Draw from './Draw.astro';
+import { box, ring, curve, type Scene } from './sk';
+
+const red = 'var(--red)';
+const mut = 'var(--mut)';
+
+// Huit barres ; la ligne d'état s'interrompt au-dessus de la cinquième, là où rien n'a été calculé.
+const heights = [58, 82, 46, 96, 70, 104, 86, 62];
+const barX = (k: number) => 162 + k * 40;
+const scene: Scene = {
+  ink: [
+    { d: box(10, 10, 500, 300, 10), at: 0.1, t: 0.9 },
+    { d: ring(30, 28, 4) + ring(46, 28, 4) + ring(62, 28, 4), at: 0.5, t: 0.3, w: 1.8 },
+    { d: 'M10 46H510', at: 0.6, t: 0.4 },
+    { d: 'M120 46V310', at: 0.8, t: 0.4 },
+    { d: 'M28 76H98M28 104H88M28 160H80M28 188H94', at: 1, t: 0.5, w: 2.6 },
+    { d: box(140, 58, 104, 40, 6), at: 1.5, t: 0.4 },
+    { d: box(258, 58, 104, 40, 6), at: 1.6, t: 0.4 },
+    { d: box(376, 58, 116, 40, 6), at: 1.7, t: 0.4 },
+    { d: 'M152 72H186M270 72H300M388 72H430', at: 1.9, t: 0.3, w: 3.2 },
+    { d: 'M152 86H222M270 86H338M388 86H468', at: 2, t: 0.3, w: 1.6 },
+    { d: 'M146 140V288H494', at: 2.1, t: 0.5 },
+  ],
+  blue: [
+    { d: box(20, 119, 90, 26, 6) + 'M32 132H98', at: 1.3, t: 0.4 },
+    ...heights.map((h, k) => ({
+      d: `M${barX(k)} 288V${288 - h}H${barX(k) + 22}V288M${barX(k)} ${288 - Math.round(h * 0.45)}H${barX(k) + 22}`,
+      at: 2.5 + k * 0.08,
+      t: 0.3,
+    })),
+  ],
+  red: [
+    { d: 'M173 206L213 186L253 198L293 170', at: 3.3, t: 0.4, w: 3 },
+    { d: 'M373 160L413 152L453 168', at: 3.6, t: 0.35, w: 3 },
+    { d: curve(338, 132, 342, 144, 334, 158), at: 4, t: 0.3 },
+  ],
+  texts: [
+    { x: 300, y: 37, s: 'graphiques en SVG, faits maison', at: 0.9, size: 22, fill: mut },
+    { x: 333, y: 126, s: 'pas de calcul, pas de trait', at: 4.1, size: 22, fill: red },
+  ],
+};
+---
+
+<Sk
+  viewBox="0 0 520 320"
+  label="Croquis au feutre d’un écran du back-office : un menu à gauche, trois indicateurs, et un graphique où des barres montrent les flux et une ligne les états, interrompue là où rien n’a été calculé."
+  caption="Le tableau de bord analytics du back-office, vue simplifiée"
+>
+  <Draw {...scene} />
+</Sk>

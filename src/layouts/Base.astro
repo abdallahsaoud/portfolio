@@ -1,16 +1,21 @@
 ---
 import '@fontsource-variable/inter';
-import '@fontsource-variable/jetbrains-mono';
-import '../styles/global.css';
+import '@fontsource-variable/bricolage-grotesque';
+import '@fontsource-variable/caveat';
+import '../styles/base.css';
+import '../styles/site.css';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
 
 interface Props {
   title: string;
   description: string;
+  page?: 'accueil' | 'scorecast' | 'autre';
+  // Les pages hors plan du site (404) ne sont pas indexées.
+  noindex?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, page = 'accueil', noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 
@@ -22,7 +27,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="author" content="Abdallah Saoud" />
-    <meta name="theme-color" content="#0b0e12" />
+    <meta name="theme-color" content="#fbfaf6" />
+    {noindex && <meta name="robots" content="noindex" />}
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -50,12 +56,42 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         });
       })();
     </script>
+    <noscript>
+      <style is:inline>
+        .rv, .lbl, .pk { opacity: 1 !important; }
+        .draw, .dr { stroke-dashoffset: 0 !important; }
+        mark { background-size: 100% 100% !important; }
+      </style>
+    </noscript>
   </head>
   <body>
-    <Nav />
-    <main>
+    <!-- Le tremblé du feutre, partagé par tous les croquis. -->
+    <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+      <defs>
+        <filter id="wob" x="-6%" y="-6%" width="112%" height="112%">
+          <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="7" result="n"></feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="4"></feDisplacementMap>
+        </filter>
+        <!-- Même tremblé, mais avec une zone fixe : pour les groupes faits d'un seul trait droit. -->
+        <filter id="wob-u" filterUnits="userSpaceOnUse" x="-40" y="-60" width="880" height="780">
+          <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="7" result="n"></feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="3"></feDisplacementMap>
+        </filter>
+        <filter id="wob-s" x="-6%" y="-6%" width="112%" height="112%">
+          <feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="7" result="n"></feTurbulence>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"></feDisplacementMap>
+        </filter>
+      </defs>
+    </svg>
+    <a class="skip" href="#contenu">Aller au contenu</a>
+    <Nav page={page} />
+    <main id="contenu">
       <slot />
     </main>
     <Footer />
   </body>
 </html>
+
+<script>
+  import '../scripts/client.js';
+</script>

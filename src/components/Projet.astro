@@ -1,0 +1,59 @@
+---
+// Une fiche projet détaillée, avec son croquis qui se dessine.
+import type { Project } from '../data/projects';
+import ProjectSketch from './sketches/ProjectSketch.astro';
+import { typo } from '../utils/typo';
+
+interface Props {
+  project: Project;
+  k: number;
+}
+
+const { project: p, k } = Astro.props;
+const tilt = ['-.5deg', '.45deg', '-.35deg', '.5deg', '-.4deg'][k % 5];
+// Espace insécable avant les deux-points, à la française.
+const sep = (text: string) => (text.startsWith(':') ? ' ' : ' ');
+---
+
+<article class:list={['fiche rv', { alt: k % 2 === 1 }]} id={p.slug} style={`--r:${tilt}`} data-play data-hover>
+  <div class="f-side">
+    <ProjectSketch slug={p.slug} />
+    <p class="f-status"><i></i>{p.status.replace(/^●\s*/, '')}</p>
+    <ul class="tags" aria-label="Technologies">
+      {p.tags.map((t) => <li>{t}</li>)}
+    </ul>
+  </div>
+  <div class="f-body">
+    <span class="f-idx" aria-hidden="true">{p.index}</span>
+    <h3>{p.title}</h3>
+    <p class="f-meta">{p.meta}</p>
+    <p class="f-sum">{typo(p.summary)}</p>
+    <ul class="f-pts">
+      {
+        p.points.map((pt, j) => (
+          <li class="rv" style={`--d:${(0.25 + j * 0.12).toFixed(2)}s`}>
+            <strong>{pt.lead}</strong>{sep(pt.text)}{typo(pt.text)}
+          </li>
+        ))
+      }
+    </ul>
+    <div class="f-foot">
+      {
+        p.links.map((l) => (
+          <a class="btn" href={l.href} target={l.external ? '_blank' : undefined} rel={l.external ? 'noopener' : undefined}>
+            {l.label} <span aria-hidden="true">→</span>
+          </a>
+        ))
+      }
+      {p.links.length === 0 && p.sansLien && <span class="f-none">{p.sansLien}</span>}
+    </div>
+    {
+      p.note && (
+        <aside class="lecon">
+          <b>à retenir</b>
+          {typo(p.note)}
+        </aside>
+      )
+    }
+  </div>
+</article>
